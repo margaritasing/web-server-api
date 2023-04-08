@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const Role = require('../models/role')
 
 const { usuariosGet,
         usuariosPut,
@@ -19,7 +20,13 @@ router.post('/',[
     check('nombre', 'El nombre es obligatorio').not().isEmpty(),
     check('password', 'La contraseña debe ser mayor a 6 letras').isLength({ min:6 }),
     check('correo','El correo no es valido').isEmail(),
-    check('rol', 'No es un rol permitido').isIn(['ADMIN_ROLE','USER_ROLE']),
+    //check('rol', 'No es un rol permitido').isIn(['ADMIN_ROLE','USER_ROLE']),
+    check('rol').custom(async (rol = '') => {
+        const existeRol = await Role.findOne({rol})
+        if (!existeRol) {
+            throw new Error(`El rol ${rol} no esta registrado en la db`)            
+        }
+    }),
     validarCampos
 ], usuariosPost );
 
