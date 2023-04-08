@@ -4,10 +4,8 @@ const bcryptjs = require('bcryptjs');
 
 
 
-
-const usuariosGet = (req = request, res = response) => {
-
-   
+//Mostrar usuario
+const usuariosGet = (req = request, res = response) => {  
 
     const { q, nombre = 'No name', apikey, page = 1, limit } = req.query;
 
@@ -21,6 +19,8 @@ const usuariosGet = (req = request, res = response) => {
     });
 }
 
+
+//Crear usuario
 const usuariosPost = async(req, res = response) => {
 
     /* const { nombre, edad } = req.body; */
@@ -40,15 +40,30 @@ const usuariosPost = async(req, res = response) => {
     });
 }
 
-const usuariosPut = (req, res = response) => {
+
+//Actualizar usuario
+
+const usuariosPut = async(req, res = response) => {
 
     const { id } = req.params;
 
+    const { _id, password, google, correo, ...resto  } = req.body;
+
+    //TODO validar contra db
+
+    if (password) {         
+        const salt = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salt)
+    }
+
+    const usuario = await Usuario.findByIdAndUpdate(id, resto);
+
     res.json({
-        msg: 'put API - usuariosPut',
-        id
+        msg: 'put API - usuariosPut',        
+        usuario
     });
 }
+
 
 const usuariosPatch = (req, res = response) => {
     res.json({
@@ -56,6 +71,7 @@ const usuariosPatch = (req, res = response) => {
     });
 }
 
+//Borrar usuario
 const usuariosDelete = (req, res = response) => {
     res.json({
         msg: 'delete API - usuariosDelete'
