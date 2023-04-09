@@ -16,14 +16,12 @@ const emailExiste = async(correo = '' ) => {
         throw new Error(`El correo ${correo} ya esta en uso`)
         /*  return res.status(400).json({
              msg:'Este correo ya esta en uso'
-         }) */
-         
+         }) */         
      }
 }
 
 
 const existeUsuarioPorId = async( id ) => {
-
     // Verificar si el correo existe
     const existeUsuario = await Usuario.findById(id);
     if ( !existeUsuario ) {
